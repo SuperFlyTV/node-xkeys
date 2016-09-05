@@ -1,6 +1,6 @@
 {
   "name": "node-xkeys",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A library for using a PI Engineering XKeys HID device with Node",
   "main": "index.js",
   "scripts": {
@@ -8,21 +8,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/macoss/node-xkeys.git"
+    "url": "https://github.com/keylase/node-xkeys.git"
   },
   "keywords": [
     "xkeys",
     "PI Engineering",
     "HID",
     "XK-24",
-    "XK-80"
+    "XK-80",
+    "XK-60"
   ],
-  "author": "Rick Russell <rick@rickrussell.org> (http://github.com/macoss)",
+  "author": "Rick Russell <rick@rickrussell.org> (http://github.com/macoss), Alexey Strekalovskiy <keylase@gmail.com> (http://github.com/keylase)",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/macoss/node-xkeys/issues"
+    "url": "https://github.com/keylase/node-xkeys/issues"
   },
-  "homepage": "https://github.com/macoss/node-xkeys",
+  "homepage": "https://github.com/keylase/node-xkeys",
   "devDependencies": {
 	  "mocha": "*",
     "should": ">=3.3.2"
