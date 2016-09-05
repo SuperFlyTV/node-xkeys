@@ -23,12 +23,19 @@ var HID = require('node-hid');
 var device = null;
 var device_type = null; // Assign the device type on open
 var message = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+
 var xk24_type = 1029;
 var xk24_buttons = [0,1,2,3,4,5,8,9,10,11,12,13,16,17,18,19,20,21,24,25,26,27,28,29];
 var xk24_backlight_offset = 32;
+
+var xk60_type = 1121;
+var xk60_buttons = Array.apply(null, Array(80)).map(function (_, i) {return i;});
+var xk60_backlight_offset = 80;
+
 var xk80_type = 1089;
 var xk80_buttons = Array.apply(null, Array(80)).map(function (_, i) {return i;});
 var xk80_backlight_offset = 80;
+
 var buttons = null; // Stores the current buttons based on the device_type.
 
 var clearMessage = function() {
@@ -44,13 +51,19 @@ var setButtons = function() {
 			break;
 		case xk80_type:
 			buttons = xk80_buttons;
+			break;
+		case xk60_type:
+			buttons = xk60_buttons;
+			break;
 	}
 };
 
 var set_blue_backlight = function(device,button, on, flash) {
 	  clearMessage();
 	  message[1] = 181;
-	  message[2] = button;
+
+          message[2] = button;
+
 	  if(on) {
 		  if(flash) {
 			  message[3] = 2; //flash
@@ -67,7 +80,7 @@ var set_blue_backlight = function(device,button, on, flash) {
 var set_red_backlight = function(device, button, on, flash) {
 	  clearMessage();
 	  message[1] = 181;
-	  
+
 	  var offset = 0;
 	  // Which device do we have?
 	  switch(device_type) {
@@ -76,6 +89,10 @@ var set_red_backlight = function(device, button, on, flash) {
 		 	 break;
 		 case xk80_type:
 			 offset = xk80_backlight_offset;
+			 break;
+		 case xk60_type:
+			 offset = xk60_backlight_offset;
+			 break;
 	  }
 	  message[2] = button + offset;
 
@@ -97,7 +114,7 @@ var set_red_backlight = function(device, button, on, flash) {
 module.exports = {
   devices: function(type) {
     device_list = HID.devices(1523,type);
-    
+
     var xkeys_list = [];
 
     device_list.forEach(function(entry) {
@@ -109,7 +126,7 @@ module.exports = {
 
     return xkeys_list;
   },
-  
+
   open: function(path) {
     if(path)
     {
@@ -143,12 +160,13 @@ module.exports = {
 
   // Open the first device of the passed in product id
   openFirst: function(type) {
-    
+
     if(!type) {
       throw Error('Please specify an XKeys type of either xkeys.XK_24 of xkeys.XK_80');
     }
-    
+    //console.log(HID.devices());
     var device_list = HID.devices(1523,type);
+    console.log(device_list, type);
 
     if(device_list.length) {
       this.open(device_list[0].path);
@@ -184,7 +202,7 @@ module.exports = {
     if(green) {
       mask = mask | 64;
     }
-    
+
     if(red) {
       mask = mask | 128;
     }
@@ -228,15 +246,15 @@ module.exports = {
     device.write(message);
     return true;
   },
- 
+
   	setBlueBackLight: function(button, on, flash) {
 	   set_blue_backlight(device, button, on, flash);
-   	},	   
+   	},
 
   	setRedBackLight: function(button, on, flash) {
 		set_red_backlight(device, button, on, flash);
 	},
-	
+
 	setAllBlueBackLights: function(on, flash) {
 		buttons.forEach( function(button) {
 			set_blue_backlight(device, button, on, flash);
@@ -247,6 +265,9 @@ module.exports = {
 		buttons.forEach( function(button) {
 			set_red_backlight(device, button, on, flash);
 		});
+	},
+	getDevice: function() {
+		return device;
 	}
 
 
@@ -275,6 +296,20 @@ Object.defineProperty(module.exports, "XK_80", {
 
 Object.defineProperty(module.exports, "XK_80_BUTTONS", {
   value: xk80_buttons,
+  enumerable: true,
+  writeable: false,
+  configurable: false
+});
+
+Object.defineProperty(module.exports, "XK_60", {
+  value: xk60_type,
+  enumerable: true,
+  writable: false,
+  configurable: false
+});
+
+Object.defineProperty(module.exports, "XK_60_BUTTONS", {
+  value: xk60_buttons,
   enumerable: true,
   writeable: false,
   configurable: false
