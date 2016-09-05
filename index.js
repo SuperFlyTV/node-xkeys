@@ -164,9 +164,7 @@ module.exports = {
     if(!type) {
       throw Error('Please specify an XKeys type of either xkeys.XK_24 of xkeys.XK_80');
     }
-    //console.log(HID.devices());
     var device_list = HID.devices(1523,type);
-    console.log(device_list, type);
 
     if(device_list.length) {
       this.open(device_list[0].path);
